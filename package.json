@@ -1,0 +1,12 @@
+{
+  "name": "scheduled-trigger",
+  "version": "1.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "@forge/api": "^5.0.1",
+    "@forge/events": "^0.9.10",
+    "@forge/resolver": "^1.6.7"
+  }
+}

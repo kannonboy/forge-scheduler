@@ -1,0 +1,46 @@
+modules:
+  trigger:
+    - key: installed
+      function: on-install
+      events:
+        - avi:forge:installed:app
+  scheduledTrigger:
+    - key: task-scheduler
+      function: schedule-tasks
+      interval: fiveMinute
+  consumer:
+    - key: task-queue
+      queue: tasks
+      resolver:
+        function: task-processor
+        method: process-task
+  function:
+    - key: schedule-tasks
+      handler: index.scheduleTasks
+    - key: on-install
+      handler: index.onInstall
+    - key: task-processor
+      handler: index.taskProcessor
+
+  # for testing
+  webtrigger:
+    - key: task-scheduler-web
+      function: schedule-tasks
+
+app:
+  id: ari:cloud:ecosystem::app/377ee0b0-a800-41e1-a9ac-3dd2b8636a15
+  runtime:
+    name: nodejs22.x
+  storage:
+    entities:
+      - name: schedule
+        attributes:
+          interval:
+            type: integer
+          lastScheduledFor:
+            type: integer
+
+permissions:
+  scopes:
+    - storage:app
+    - read:jira-work
