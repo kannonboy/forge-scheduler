@@ -16,19 +16,21 @@ modules:
         method: process-task
   function:
     - key: schedule-tasks
-      handler: index.scheduleTasks
+      handler: taskQueue.scheduleTasks
     - key: on-install
-      handler: index.onInstall
+      handler: scheduler.onInstall
     - key: task-processor
-      handler: index.taskProcessor
+      handler: processor.taskProcessor
+    - key: debug
+      handler: debug.debugWebtrigger
 
   # for testing
   webtrigger:
-    - key: task-scheduler-web
-      function: schedule-tasks
+    - key: debug-webtrigger
+      function: debug
 
 app:
-  id: ari:cloud:ecosystem::app/377ee0b0-a800-41e1-a9ac-3dd2b8636a15
+  id: ari:cloud:ecosystem::app/3347ae16-b4a7-4403-bbf1-8961f5f06fdc
   runtime:
     name: nodejs22.x
   storage:

@@ -1,11 +1,11 @@
 import Resolver from "@forge/resolver";
-import { runTask } from "./tasks";
+import { runTaskForSchedule } from "./scheduler";
 
 const resolver = new Resolver();
 
-resolver.define("process-task", async ({ payload: { scheduleKey }, context }) => {
-  console.log(`Running task ${scheduleKey}`);
-  await runTask(scheduleKey);
+resolver.define("process-task", async ({ payload: { key }, context }) => {
+  console.log(`Running task ${key}`);
+  await runTaskForSchedule(key);
 });
 
 export const taskProcessor = resolver.getDefinitions();
