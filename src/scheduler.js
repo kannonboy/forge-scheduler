@@ -11,7 +11,7 @@ const DAYS = HOURS * 24;
 const WEEKS = DAYS * 7;
 
 class Schedule {  
-  constructor(key, interval, runTask) {
+  constructor({ key, interval, runTask }) {
     this.key = key;
     this.interval = interval;
     this.runTask = runTask;
@@ -19,8 +19,15 @@ class Schedule {
 }
 
 const schedules = [
-  new Schedule('log-random-project', 20 * MINUTES, logRandomProject),
-  new Schedule('incrementing-counter', 1 * MINUTES, counter),
+  new Schedule({
+    key: 'log-random-project', 
+    interval: 20 * MINUTES, 
+    runTask: logRandomProject
+  }), new Schedule ({
+    key: 'incrementing-counter', 
+    interval: 1 * MINUTES, 
+    runTask: counter
+  }),
 ];
 
 export async function onInstall() {  

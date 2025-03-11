@@ -15,12 +15,12 @@ modules:
         function: task-processor
         method: process-task
   function:
-    - key: schedule-tasks
-      handler: taskQueue.scheduleTasks
     - key: on-install
       handler: scheduler.onInstall
+    - key: schedule-tasks
+      handler: taskQueue.scheduleTasks
     - key: task-processor
-      handler: processor.taskProcessor
+      handler: taskQueue.taskProcessor
     - key: debug
       handler: debug.debugWebtrigger
 

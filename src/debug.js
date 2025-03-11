@@ -3,6 +3,13 @@ import { scheduleTasks } from "./taskQueue";
 import { taskProcessor } from "./processor";
 import { updateInterval } from "./scheduler";
 
+/**
+ * This is a debug webtrigger that allows you to test deployed functions and update schedules. 
+ * Available query parameters are:
+ * - `fn`: the function to run — see switch below for available functions
+ * - `key`: (for `updateSchedule`) the key of the schedule to update
+ * - `interval`: (for `updateSchedule`) the new interval for the schedule
+ */
 export async function debugWebtrigger(request) {
   console.log("Received request", request);
   const fn = request.queryParameters.fn?.[0];
