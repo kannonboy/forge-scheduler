@@ -9,10 +9,9 @@ const taskQueue = new Queue({ key: 'tasks' });
 const TEN_MINUTES = 10 * 60;
 
 /**
- * Iterates through registered schedules and schedules any tasks due in the next ten minutes.
- * 
- * Ten minutes is chosen as this function is called by scheduled trigger every five minutes, and 
- * the max `delayInSeconds` for a queue is 15 minutes. 
+ * This function is bound to a scheduled trigger that runs every 5 minutes. It iterates through 
+ * all registered schedules and schedules any tasks due in the next 10 minutes. We schedule the 
+ * next 10 minutes to allow for any variability in the scheduled trigger execution timing.
  */
 export async function scheduleTasks() {
   const query = await storage
@@ -30,16 +29,32 @@ export async function scheduleTasks() {
     const { key, value: schedule } = result;
     let lastScheduledFor = schedule.lastScheduledFor;
 
-    // If the task has never run, schedule it immediately
+    // if the task has never run, schedule it immediately
     if (schedule.lastScheduledFor === 0) {
       await scheduleTask(key, 0);
       lastScheduledFor = now;
     }
 
-    // Schedule any tasks that are due in the next ten minutes
+    // schedule any tasks due to run in the next 10 minutes
     while (lastScheduledFor + schedule.interval < now + TEN_MINUTES) {
-      lastScheduledFor += schedule.interval;
-      await scheduleTask(key, lastScheduledFor - now);
+      const scheduleDueAt = scheduleDueAt + schedule.interval;
+            
+      // delay the task so that it runs at the correct time
+      let delay = scheduleDueAt - now;
+      
+      if (delay < 0) {        
+        // if the calculated delay is negative, the task is overdue. This implies the 
+        // scheduled trigger did not fire for more than 10 minutes, which may happen 
+        // if the trigger is disabled or there is an incident impacting the Forge 
+        // platform. In this case, we run the task immediately. This resets the 
+        // "lastScheduledFor" timestamp to the current time, so if multiple tasks 
+        // on the same schedule were overdue, it will only run the task once.
+        console.warn(`Task ${key} is overdue by ${-delay} seconds`); 
+        delay = 0;
+      }
+
+      await scheduleTask(key, delay);
+      lastScheduledFor = now + delay;
     }
     
     // Store the time of the last scheduled task
@@ -57,11 +72,6 @@ export async function scheduleTasks() {
  * Pushes a task on the task queue.
  */
 async function scheduleTask(key, delayInSeconds) {
-  if (delayInSeconds < 0) {
-    // this should only happen if the scheduled trigger did not trigger for 10+ minutes
-    console.warn(`Task ${key} is overdue by ${-delayInSeconds} seconds`); 
-    delayInSeconds = 0;
-  }
   console.log(`Scheduling task ${key} to run in ${delayInSeconds} seconds`);
   return taskQueue.push({ key }, { delayInSeconds });
 }
@@ -69,7 +79,7 @@ async function scheduleTask(key, delayInSeconds) {
 const resolver = new Resolver();
 
 /**
- * Consume a task from the task and executes it.
+ * Consume a task from the queue and execute it.
  */
 resolver.define("process-task", async ({ payload: { key }, context }) => {
   console.log(`Running task ${key}`);

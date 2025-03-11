@@ -25,9 +25,9 @@ modules:
       handler: debug.debugWebtrigger
 
   # for testing
-  webtrigger:
-    - key: debug-webtrigger
-      function: debug
+  # webtrigger:
+  #   - key: debug-webtrigger
+  #     function: debug
 
 app:
   id: ari:cloud:ecosystem::app/3347ae16-b4a7-4403-bbf1-8961f5f06fdc

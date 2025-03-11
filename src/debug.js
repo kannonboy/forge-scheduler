@@ -1,10 +1,11 @@
 import { onInstall } from "./scheduler";
-import { scheduleTasks } from "./taskQueue";
-import { taskProcessor } from "./processor";
+import { scheduleTasks, taskProcessor } from "./taskQueue";
 import { updateInterval } from "./scheduler";
 
 /**
- * This is a debug webtrigger that allows you to test deployed functions and update schedules. 
+ * This is a debug webtrigger that allows you to test deployed functions and update schedules.
+ * Uncomment it in the `webtrigger` section of `manifest.yml` to enable it.
+ * 
  * Available query parameters are:
  * - `fn`: the function to run — see switch below for available functions
  * - `key`: (for `updateSchedule`) the key of the schedule to update
