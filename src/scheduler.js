@@ -1,5 +1,7 @@
 import { storage } from '@forge/api';
 
+import { scheduleTasks } from './taskQueue';
+
 import logRandomProject from './tasks/randomProject';
 import counter from './tasks/counter';
 
@@ -30,15 +32,32 @@ export async function onInstall() {
       lastScheduledFor: 0
     });
   }
+
+  // schedule tasks immediately after install
+  await scheduleTasks();
 }
 
 export async function updateInterval(key, newInterval) {
-  console.log(`Updating schedule ${key} to every ${interval} seconds`);
-  const schedule = storage.entity("schedule").get(key);
+  const schedule = await storage.entity("schedule").get(key);
+
+  if (!schedule) {
+    console.error(`Schedule ${key} not found`);
+    return;
+  }
+  console.log(`Updating schedule ${key} to every ${newInterval} seconds`);
+  
+  const now = Math.floor(Date.now() / 1000);
+  if (schedule.lastScheduledFor > now) {
+    console.warn(`Schedule ${key} had tasks enqueued for the next ten minutes. These will still execute.`);
+  }
+
   await storage.entity("schedule").set(key, { 
     interval: newInterval, 
-    lastScheduledFor: schedule.lastScheduledFor 
+    lastScheduledFor: 0 // reset the schedule to enqueue tasks using the new schedule immediately
   });
+
+  // schedule tasks after update
+  await scheduleTasks();
 }
 
 export async function runTaskForSchedule(key) {

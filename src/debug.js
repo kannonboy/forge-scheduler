@@ -1,6 +1,7 @@
 import { onInstall } from "./scheduler";
 import { scheduleTasks } from "./taskQueue";
 import { taskProcessor } from "./processor";
+import { updateInterval } from "./scheduler";
 
 export async function debugWebtrigger(request) {
   console.log("Received request", request);
@@ -11,15 +12,17 @@ export async function debugWebtrigger(request) {
     switch (fn) {
       case "onInstall":
         await onInstall();
-        console.log("onInstall completed");
         break;
       case "scheduleTasks":
         await scheduleTasks();
-        console.log("scheduleTasks completed");
         break;
       case "taskProcessor":
         await taskProcessor();
-        console.log("taskProcessor completed");
+        break;
+      case "updateSchedule":
+        const key = request.queryParameters.key?.[0];
+        const interval = parseInt(request.queryParameters.interval?.[0]);
+        await updateInterval(key, interval);
         break;
       default:
         return {

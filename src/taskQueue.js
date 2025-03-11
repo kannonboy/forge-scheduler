@@ -13,13 +13,12 @@ export async function scheduleTasks() {
     .limit(100) // note - processes at most 100 schedules
     .getMany();
 
-  console.log(`Found ${query.results.length} schedules`);
+  console.log(`Found ${query.results.length} schedules to process`);
 
   const now = Math.floor(Date.now() / 1000);
 
   for (const result of query.results) {
     const { key, value: schedule } = result;
-
     let lastScheduledFor = schedule.lastScheduledFor;
 
     // If the task has never run, schedule it immediately
