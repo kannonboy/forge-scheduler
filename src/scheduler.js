@@ -38,7 +38,8 @@ const schedules = [
     key: 'log-random-project', 
     interval: 20 * MINUTES, 
     runTask: logRandomProject
-  }), new Schedule ({
+  }), 
+  new Schedule ({
     key: 'incrementing-counter', 
     interval: 1 * MINUTES, 
     runTask: counter
@@ -46,8 +47,9 @@ const schedules = [
 ];
 
 /**
- * This function is bound to the `installed` lifecycle event. It initialises the schedules in Forge
- * storage and schedules the tasks for the first time.
+ * This function is bound to the `installed` lifecycle event invoked when the app is 
+ * first installed. It initialises the schedules in Forge storage and schedules 
+ * the tasks for the first time.
  */
 export async function onInstall() {  
   console.log(`App installed! Initialising ${schedules.length} schedules...`);
@@ -81,8 +83,8 @@ export async function updateInterval(key, newInterval) {
     return;
   }
 
-  if (newInterval < 5) {
-    console.error(`New interval ${newInterval} for schedule ${key} is too short - must be at least 5 seconds`);
+  if (newInterval < 10) {
+    console.error(`New interval ${newInterval} for schedule ${key} is too short - must be at least 10 seconds`);
     return;
   }
 

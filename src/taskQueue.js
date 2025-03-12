@@ -37,7 +37,7 @@ export async function scheduleTasks() {
 
     // schedule any tasks due to run in the next 10 minutes
     while (lastScheduledFor + schedule.interval < now + TEN_MINUTES) {
-      const scheduleDueAt = scheduleDueAt + schedule.interval;
+      const scheduleDueAt = lastScheduledFor + schedule.interval;
             
       // delay the task so that it runs at the correct time
       let delay = scheduleDueAt - now;
@@ -49,7 +49,7 @@ export async function scheduleTasks() {
         // platform. In this case, we run the task immediately. This resets the 
         // "lastScheduledFor" timestamp to the current time, so if multiple tasks 
         // on the same schedule were overdue, it will only run the task once.
-        console.warn(`Task ${key} is overdue by ${-delay} seconds`); 
+        console.warn(`Schedule ${key} is overdue by ${-delay} seconds`); 
         delay = 0;
       }
 
@@ -59,7 +59,7 @@ export async function scheduleTasks() {
     
     // Store the time of the last scheduled task
     if (lastScheduledFor !== schedule.lastScheduledFor) {
-      console.log(`Updating lastScheduledFor to ${lastScheduledFor} for ${key}`);
+      console.log(`Updating lastScheduledFor for ${key} to ${new Date(lastScheduledFor * 1000).toUTCString()}`);
       await storage.entity("schedule").set(key, {
         interval: schedule.interval,
         lastScheduledFor,
@@ -72,7 +72,13 @@ export async function scheduleTasks() {
  * Pushes a task on the task queue.
  */
 async function scheduleTask(key, delayInSeconds) {
-  console.log(`Scheduling task ${key} to run in ${delayInSeconds} seconds`);
+  let timestamp;
+  if (delayInSeconds === 0) {
+    timestamp = "immediately";
+  } else {
+    timestamp = `at ${new Date(Date.now() + delayInSeconds * 1000).toUTCString()}`;
+  }
+  console.log(`Schedule ${key} will run at ${timestamp}`);
   return taskQueue.push({ key }, { delayInSeconds });
 }
 
@@ -82,7 +88,7 @@ const resolver = new Resolver();
  * Consume a task from the queue and execute it.
  */
 resolver.define("process-task", async ({ payload: { key }, context }) => {
-  console.log(`Running task ${key}`);
+  console.log(`Running task for schedule ${key}`);
   await runTaskForSchedule(key);
 });
 
