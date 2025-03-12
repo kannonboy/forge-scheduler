@@ -43,10 +43,6 @@ To add your own tasks, simply add new `Schedule` instances to the array.
 
 Schedule intervals can be updated using the `updateInterval` function exported by `scheduler.js`.
 
-## Debugging
-
-A debug webtrigger is provided for interactively registering, running, and updating schedules. See `debug.js` for details.
-
 ## Architecture
 
 The Forge Scheduler uses a combination of a 5 minute [scheduled trigger](https://developer.atlassian.com/platform/forge/manifest-reference/modules/scheduled-trigger/) and [async events](https://developer.atlassian.com/platform/forge/runtime-reference/async-events-api/) to implement fine-grained 
@@ -61,6 +57,14 @@ details.
 
 Schedules are stored as [custom entities](https://developer.atlassian.com/platform/forge/storage-reference/storage-api-custom-entities/), which are 
 initialised during app installation using a trigger bound to the `avi:forge:installed:app` event (`onInstal()` in `scheduler.js`).
+
+## Logging
+
+Being an example app, logging is (very) verbose to help you understand its behaviour. You may wish to tune or disable the logging for use in production.
+
+## Debugging
+
+A debug webtrigger is provided for interactively registering, running, and updating schedules. See `debug.js` for details.
 
 ## Requirements
 
