@@ -10,6 +10,30 @@ This example app implements a more flexible pattern that allows you to:
 - allows updating of a schedule at runtime
 - support up to 100 different schedules
 
+## Getting Started
+
+- Clone this repository.
+
+- Register a copy of the app to your Atlassian account:
+```
+forge register
+```
+
+- Install top-level dependencies:
+```
+npm install
+```
+
+- Deploy your app:
+```
+forge deploy
+```
+
+- Install your app into an Atlassian site:
+```
+forge install
+```
+
 ## Defining schedules
 
 Scheduled tasks are defined in the `schedules` array in `scheduler.js`:
